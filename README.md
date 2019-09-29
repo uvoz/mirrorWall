@@ -3,8 +3,8 @@ This is the software that flows messages to the mirror wall.
 It lives on mosquitto MQTT.
 
 # Todo: 
-1. parse frames and submit the positions trough messages to the hubs useing the existing mechanism.
-2. parse animations and submit each frame to the new function above.
+
+1. parse entire animations and submit each frame to the playframe handler.
 
 
 
@@ -16,4 +16,9 @@ It lives on mosquitto MQTT.
 ## Move a servo on a bonnet connected to a hub :
 
  mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":140}'
+ 
+ ## play a frame containing all mirror positions
+ 
+ #mosquitto_pub -t playframe -m '{"Frame": "some name you give to the frame","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
+
 
