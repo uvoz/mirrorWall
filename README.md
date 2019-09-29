@@ -9,11 +9,11 @@ It lives on mosquitto MQTT.
 
 
 ## How to use from the outside: ##
-- Move a mirror using translation of angles to servo angles:
+## Move a mirror using translation of angles to servo angles: ##
 
  mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
 
-- Move a servo on a bonnet connected to a hub :
+## Move a servo on a bonnet connected to a hub :##
 
  mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":140}'
 
