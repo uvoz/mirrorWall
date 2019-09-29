@@ -80,7 +80,7 @@ def handlepinlevelapi(msg):
     #for x in range(10000):
     j = json.loads(msg)
  
-    #print(j)
+    print(j)
     if j['bonnet']<0 or j['bonnet']>2 or j['servo']<0 or j['servo']>15 or j['angle']<POLICE_SERVO_MIN_SERVO_POS or j['angle']>POLICE_SERVO_MAX_SERVO_POS:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlepinlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("erUDservo_polyror",errormessage)
@@ -93,7 +93,7 @@ def handlepinlevelapi(msg):
 def handlemovemirror(msg):
 
     j = json.loads(msg)
-  #  print(j)#pinlevelapi
+    print(j)#pinlevelapi
     if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("error",errormessage)
@@ -115,24 +115,30 @@ def handlemovemirror(msg):
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.subscribe(pinlevelapi)
-    client.subscribe(movemirror)
+    try:
+        print("Connected with result code "+str(rc))
+        client.subscribe(pinlevelapi)
+        client.subscribe(movemirror)
+
+    # beacuse otherwize we don't know whats wrong if something is
+    except Exception as e:
+        print("Exception: "+str(e))
 
     
 
 def on_message(mqttc, obj, msg):
-    starttime = int(round(time.time() * 1000))
-    
-    if msg.topic==pinlevelapi:
-     handlepinlevelapi(msg.payload)
-    if msg.topic==movemirror:
+    try:
+        payload = msg.payload.decode("utf-8")
+        topic = msg.topic
+        
+        if topic==pinlevelapi:
+            handlepinlevelapi(payload)
+        elif topic==movemirror:
+            handlemovemirror(payload)
 
-      handlemovemirror(msg.payload)
-    
-
-    endtime = int(round(time.time() * 1000))
-    print('1 mirror set processing time:'+str(endtime-starttime))
+    # beacuse otherwize we don't know whats wrong if something is
+    except Exception as e:
+        print("Exception: "+str(e))
 
 
 #startup code

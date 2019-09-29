@@ -26,6 +26,7 @@ def routemovemirror(msg):
     #print("routing to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
 
+
 #mosquitto_pub -t playframe -m '{"Frame": "some name you give to it","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
     
 def handleplayframe(msg):
@@ -37,19 +38,31 @@ def handleplayframe(msg):
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.subscribe(movemirror)
-    client.subscribe(playframe)
-
+    try:
+        print("Connected with result code "+str(rc))
+        client.subscribe(movemirror)
+        client.subscribe(playframe)
+    except Exception as e:
+        client.publish("error", "router issue:"+str(e))
+        #print("Exception: "+str(e))
     
 def on_message(mqttc, obj, msg):
-    print(msg.topic)
-    if msg.topic==movemirror:        
-     routemovemirror(msg.payload)
+    try:
+        print(msg.topic)
+        payload = msg.payload.decode("utf-8")
+        if msg.topic==movemirror:        
+            routemovemirror(payload)
      
-    if msg.topic==playframe:        
-     handleplayframe(msg.payload)
-    
+        if msg.topic==playframe:        
+            handleplayframe(payload)
+    except Exception as e:
+        client.publish("error", "router issue:"+str(e))
+        #print("Exception: "+str(e)
+
+
+
+
+
 #startup code
 client = mqtt.Client("router")
 client.on_connect = on_connect
