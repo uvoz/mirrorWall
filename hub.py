@@ -115,24 +115,34 @@ def handlemovemirror(msg):
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.subscribe(pinlevelapi)
-    client.subscribe(movemirror)
+    try:
+        print("Connected with result code "+str(rc))
+        client.subscribe(pinlevelapi)
+        client.subscribe(movemirror)
+
+    # beacuse otherwize we don't know whats wrong if something is
+    except Exception as e:
+        print("Exception: "+str(e))
 
     
 
 def on_message(mqttc, obj, msg):
-    starttime = int(round(time.time() * 1000))
-    
-    if msg.topic==pinlevelapi:
-     handlepinlevelapi(msg.payload)
-    if msg.topic==movemirror:
+    try:
+        starttime = int(round(time.time() * 1000))
+        payload = msg.payload.decode("utf-8")
+        topic = msg.topic
 
-      handlemovemirror(msg.payload)
-    
+        if topic==pinlevelapi:
+            handlepinlevelapi(payload)
+        elif topic==movemirror:
+            handlemovemirror(payload)
 
-    endtime = int(round(time.time() * 1000))
-    print('1 mirror set processing time:'+str(endtime-starttime))
+        endtime = int(round(time.time() * 1000))
+        print('1 mirror set processing time:'+str(endtime-starttime))
+
+    # beacuse otherwize we don't know whats wrong if something is
+    except Exception as e:
+        print("Exception: "+str(e))
 
 
 #startup code

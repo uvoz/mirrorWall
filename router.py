@@ -23,19 +23,33 @@ def routemovemirror(msg):
     hub=address['hub']
     print("routing to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
-    
+
+
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    client.subscribe(movemirror)
+    try:
+        print("Connected with result code "+str(rc))
+        client.subscribe(movemirror)
+
+    # beacuse otherwize we don't know whats wrong if something is
+    except Exception as e:
+        print("Exception: "+str(e))
+
 
     
 def on_message(mqttc, obj, msg):
-    print(msg.topic)
-    if msg.topic==movemirror:
-        
-     routemovemirror(msg.payload)
-    
+    try:
+        payload = msg.payload.decode("utf-8")
+        topic = msg.topic
+        print("top="+topic+", pay="+payload)
+        if topic==movemirror:
+            routemovemirror(str(msg.payload))
+
+    # beacuse otherwize we don't know whats wrong if something is
+    except Exception as e:
+        print("Exception: "+str(e))
+
+
 #startup code
 client = mqtt.Client("router")
 client.on_connect = on_connect
