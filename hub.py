@@ -1,5 +1,6 @@
 # MQTT triggered communication to i2c Adafruit 16-Channel 12-bit PWM/Servo Bonnet
 # 2019 by StrejcekBob
+# tested by MakerMatty
 # This are the interfaces between the outside word and the HUB.
 # You talk to a hub by sending it MQTT messages. 
 
@@ -20,6 +21,7 @@
 #configurable variables
 hub='hub1'
 mqtt_broker_address ="127.0.0.1"
+mqtt_broker_port    =1883
 pinlevelapi         =hub+'/pinlevelapi'
 movemirror          =hub+'/movemirror'
 
@@ -136,10 +138,10 @@ def on_message(mqttc, obj, msg):
 #startup code
 
 print(hub+" started up")
-client = mqtt.Client()
+client = mqtt.Client(hub)
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(mqtt_broker_address)
+client.connect(mqtt_broker_address,port=mqtt_broker_port)
 
 
 client.loop_forever()

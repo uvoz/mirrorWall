@@ -1,5 +1,6 @@
 # ROUTER for mirror messages
 # 2019 by StrejcekBob
+# tested by MakerMatty
 # This module is a central router that receives mirror movements, frames and animations
 #it listens to messages sent to the movemirror topic, retrieves the hub address and forwards the message to the hub
 #no validation is made her to keep it light. Validation is done distributed by all hubs.
@@ -15,6 +16,8 @@ import time
 mqtt_broker_address ="127.0.0.1"
 movemirror        ='movemirror'
 playframe         ='playframe'
+mqtt_broker_port    =1883
+
      
 def routemovemirror(msg):
     j = json.loads(msg)
@@ -31,11 +34,7 @@ def handleplayframe(msg):
     for movement in j['movements']:
         routemovemirror(json.dumps(movement))
         print(movement)
-        #print("movement "+movement)
-        
-        
-      #  for restaurant in data['restaurants']:
-    #print restaurant['restaurant']['name']
+
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -52,8 +51,8 @@ def on_message(mqttc, obj, msg):
      handleplayframe(msg.payload)
     
 #startup code
-client = mqtt.Client()
+client = mqtt.Client("router")
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(mqtt_broker_address)
+client.connect(mqtt_broker_address,port=mqtt_broker_port)
 client.loop_forever()
