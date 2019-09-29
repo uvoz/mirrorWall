@@ -1,5 +1,7 @@
 # mirrorWall
 This is the software that flows messages to the mirror wall.
+It lives on mosquitto MQTT.
+
 
 Todo: 
 1-parse frames and submit the positions trough messages to the hubs useing the existing mechanism.
