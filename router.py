@@ -14,25 +14,42 @@ import time
 #configurable variables
 mqtt_broker_address ="127.0.0.1"
 movemirror        ='movemirror'
+playframe         ='playframe'
      
 def routemovemirror(msg):
     j = json.loads(msg)
     address=mm.getMirrorAddress(j['mirror'])
     hub=address['hub']
-    print("routing to hub "+str(hub)+": "+json.dumps(j))
+    #print("routing to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
+
+#mosquitto_pub -t playframe -m '{"Frame": "some name you give to it","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
     
+def handleplayframe(msg):
+    j = json.loads(msg)
+    #print (j)
+    for movement in j['movements']:
+        routemovemirror(json.dumps(movement))
+        print(movement)
+        #print("movement "+movement)
+        
+        
+      #  for restaurant in data['restaurants']:
+    #print restaurant['restaurant']['name']
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe(movemirror)
+    client.subscribe(playframe)
 
     
 def on_message(mqttc, obj, msg):
     print(msg.topic)
-    if msg.topic==movemirror:
-        
+    if msg.topic==movemirror:        
      routemovemirror(msg.payload)
+     
+    if msg.topic==playframe:        
+     handleplayframe(msg.payload)
     
 #startup code
 client = mqtt.Client()
