@@ -43,7 +43,7 @@ def on_message(mqttc, obj, msg):
         topic = msg.topic
         print("top="+topic+", pay="+payload)
         if topic==movemirror:
-            routemovemirror(str(msg.payload))
+            routemovemirror(payload)
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
