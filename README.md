@@ -12,13 +12,18 @@ It lives on mosquitto MQTT.
 ## Move a mirror using translation of angles to servo angles: 
 
  mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
+ 
 
-## Move a servo on a bonnet connected to a hub :
+## play a frame containing multiple/all mirror positions (using translation of angles above)
+ 
+ #mosquitto_pub -t playframe -m '{"Frame": "some name you give to the frame","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
+ 
+
+
+## Move a servo on a bonnet connected to a hub (no servo angle translation):
 
  mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":140}'
  
- ## play a frame containing all mirror positions
- 
- #mosquitto_pub -t playframe -m '{"Frame": "some name you give to the frame","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
+
 
 
