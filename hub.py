@@ -20,7 +20,7 @@
 
 #configurable variables
 hub='hub1'
-mqtt_broker_address ="127.0.0.1"
+mqtt_broker_address ="10.25.249.104"
 mqtt_broker_port    =1883
 pinlevelapi         =hub+'/pinlevelapi'
 movemirror          =hub+'/movemirror'
