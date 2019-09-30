@@ -2,10 +2,10 @@
 # 2019 by StrejcekBob
 # tested by MakerMatty
 # This are the interfaces between the outside word and the HUB.
-# You talk to a hub by sending it MQTT messages. 
+# You talk to a hub by sending it MQTT messages.
 
 # 1- remote control each servo separately. no translation=blind fast.
-# Example mqtt message: 
+# Example mqtt message:
 # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'
 #topic (-t) is the hub you send the message to
 #servo is the servo you like to move (0-15)
@@ -16,8 +16,8 @@
 # this is very compute intensive so expect 8 frames/second for the entire mirror grid.
 # Example mqtt message:
 # mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
-    
- 
+
+
 #configurable variables
 hub='hub1'
 mqtt_broker_address ="127.0.0.1"
@@ -42,7 +42,7 @@ import math
 
 
 
- 
+
 import json
 import paho.mqtt.client as mqtt
 import time
@@ -52,34 +52,34 @@ try:
 
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
-    
-#x =20#mirror UD in degrees from -30 to 30 
-#y =10#mirror LR in degrees from -30 to 30 
- 
+
+#x =20#mirror UD in degrees from -30 to 30
+#y =10#mirror LR in degrees from -30 to 30
+
 def UDservo_poly(udangle):
     #starttime = int(round(time.time() * 1000))
     servoangle=(2.752e-12*udangle**8)+(1.701e-10*udangle**7)-(3.189e-09*udangle**6)-(4.918e-08*udangle**5)+(5.804e-07*udangle**4)+(0.0002402*udangle**3)-(0.002954*udangle**2)+(1.853*udangle)+(82.13)
     #endtime = int(round(time.time() * 1000))
     #print('UDservo_poly processing time:'+str(endtime-starttime))
     return round(servoangle,2)
- 
+
 def LRservo_poly (udangle, lrangle):
     #starttime = int(round(time.time() * 1000))
     servoangle=(82.15)+(1.4e-16*udangle)+(1.856*lrangle)+(0.000114*udangle**2)+(-5.438e-18*udangle*lrangle)+(-0.003402*lrangle**2)+(1.625e-18*udangle**3)+(-0.0002783*udangle**2*lrangle)+(-1.428e-18*udangle*lrangle**2)+(0.0001802*lrangle**3)+(-2.438e-07*udangle**4)+(1.728e-20*udangle**3*lrangle)+(5.568e-06*udangle**2*lrangle**2)+(2.203e-21*udangle*lrangle**3)+(4.473e-07*lrangle**4)+(-2.22e-21*udangle**5)+(3.245e-08*udangle**4*lrangle)+(1.969e-21*udangle**3*lrangle**2)+(-1.994e-07*udangle**2*lrangle**3)+(4.577e-22*udangle*lrangle**4)+(1.575e-07*lrangle**5)
     #endtime = int(round(time.time() * 1000))
-    #print('LRservo_poly processing time:'+str(endtime-starttime))10. do 13. října 2019 na 
+    #print('LRservo_poly processing time:'+str(endtime-starttime))10. do 13. října 2019 na
     return round(servoangle,2)
 
 
 
-    
+
 
 
 
 def handlepinlevelapi(msg):
     #for x in range(10000):
     j = json.loads(msg)
- 
+
     print(j)
     if j['bonnet']<0 or j['bonnet']>2 or j['servo']<0 or j['servo']>15 or j['angle']<POLICE_SERVO_MIN_SERVO_POS or j['angle']>POLICE_SERVO_MAX_SERVO_POS:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlepinlevelapi received invalid parameters:'+json.dumps(j)
@@ -87,8 +87,8 @@ def handlepinlevelapi(msg):
         return
     bonnets[j['bonnet']].servo[j['servo']].angle = j['angle']
     #print("position bonnet:"+str(j['bonnet'])+" pin:"+str( j['servo'])+ " angle:"+str(j['angle']))
-    
-    
+
+
 #mosquitto_pub -t hub1/mirrorlevelapi -m '{"mirror":44,"ud":15.1,"lr":-25}'
 def handlemovemirror(msg):
 
@@ -106,12 +106,12 @@ def handlemovemirror(msg):
     newmsg['angle']=UDservo_poly(j['ud'])
 
     handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
-   
+
     newmsg['servo']=address['LR-port']
     newmsg['angle']=LRservo_poly(j['ud'],j['lr'])
     handlepinlevelapi(json.dumps(newmsg))
-    
- 
+
+
 
 
 def on_connect(client, userdata, flags, rc):
@@ -124,13 +124,13 @@ def on_connect(client, userdata, flags, rc):
     except Exception as e:
         print("Exception: "+str(e))
 
-    
+
 
 def on_message(mqttc, obj, msg):
     try:
         payload = msg.payload.decode("utf-8")
         topic = msg.topic
-        
+
         if topic==pinlevelapi:
             handlepinlevelapi(payload)
         elif topic==movemirror:
