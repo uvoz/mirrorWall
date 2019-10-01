@@ -38,17 +38,14 @@ POLICE_MIN_ANGLE=-30
 import mirrormap as mm
 import sys
 import math
-
-
-
-
-
 import json
 import paho.mqtt.client as mqtt
 import time
 from adafruit_servokit import ServoKit
+
+
 try:
-    bonnets=[ServoKit(channels=16 , address=64)]#,ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)
+    bonnets=[ServoKit(channels=16 , address=65)]#,ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)
 
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
@@ -80,7 +77,7 @@ def handlepinlevelapi(msg):
     #for x in range(10000):
     j = json.loads(msg)
 
-    print(j)
+    #print(j)
     if j['bonnet']<0 or j['bonnet']>2 or j['servo']<0 or j['servo']>15 or j['angle']<POLICE_SERVO_MIN_SERVO_POS or j['angle']>POLICE_SERVO_MAX_SERVO_POS:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlepinlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("erUDservo_polyror",errormessage)
@@ -93,7 +90,8 @@ def handlepinlevelapi(msg):
 def handlemovemirror(msg):
 
     j = json.loads(msg)
-    print(j)#pinlevelapi
+
+    #print(j)#pinlevelapi
     if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("error",errormessage)
