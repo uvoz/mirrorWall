@@ -91,7 +91,7 @@ def handlepinlevelapi(msg):
 #mosquitto_pub -t hub1/mirrorlevelapi -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
 
-def movemirrornontranslated(msg):
+def handlemovemirrornontranslated(msg):
 
     j = json.loads(msg)
 
@@ -167,7 +167,7 @@ def on_message(mqttc, obj, msg):
         elif topic==movemirror:
             handlemovemirror(payload)
         elif topic==movemirror:
-            movemirrornontranslated(payload)
+            handlemovemirrornontranslated(payload)
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
