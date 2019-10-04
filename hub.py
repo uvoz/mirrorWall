@@ -97,7 +97,7 @@ def handlemovemirrornontranslated(msg):
 
     print ("movemirrornontranslated activated")
     print(j)#pinlevelapi
-    if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
+    if j['lr']<POLICE_SERVO_MIN_SERVO_POS or j['lr']>POLICE_SERVO_MAX_SERVO_POS or j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("error",errormessage)
         return
