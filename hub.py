@@ -26,8 +26,7 @@ import time
 from adafruit_servokit import ServoKit
 
 #configurable variables
-hub='hub1'
-
+hub                         ='hub1'
 mqtt_broker_address         ="10.25.249.104"
 mqtt_broker_port            =1883
 pinlevelapi                 =hub+'/pinlevelapi'
@@ -170,7 +169,8 @@ def on_message(mqttc, obj, msg):
         if topic==pinlevelapi:
             handlepinlevelapi(payload)
         elif topic==movemirror:
-            #handlemovemirror(payload)
+            handlemovemirror(payload)
+        elif topic==movemirrornontranslated:
             movemirrornontranslated(payload)
         elif topic==calibrate:
             handlecalibrate(payload)
