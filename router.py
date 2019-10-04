@@ -49,7 +49,7 @@ def handleplayframe(msg):
     #print("handleplayframe invoked")
     #print (j)
     for movement in j['movements']:
-        routemovemirror(json.dumps(movement))
+        routemmovemirrornontranslated(json.dumps(movement))
         #print("movement seen")
         #print(movement)
 
