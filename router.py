@@ -16,7 +16,7 @@ import time
 
 
 #configurable variables
-mqtt_broker_address     ="127.0.0.1"
+mqtt_broker_address     ="10.25.249.104"
 movemirror              ='movemirror'
 movemirrornontranslated ='movemirrornontranslated'
 playframe               ='playframe'
