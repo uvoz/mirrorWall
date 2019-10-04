@@ -46,9 +46,12 @@ POLICE_MIN_ANGLE=-30
 
 channels_count = 16
 
+deltas = []
+
 try:
     bonnets=[ServoKit(channels=channels_count , address=65)]#,ServoKit(channels=channels_count, address=65),ServoKit(channels=channels_count, address=66)
-    deltas = list({'dup':0.0,'dlr':0.0,} for i in xrange(channels_count))
+    for n in range(len(bonnets)):
+        deltas.append(list({'dup':0.0,'dlr':0.0,} for i in xrange(channels_count)))
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
    
@@ -93,12 +96,13 @@ def movemirrornontranslated(msg):
 
     j = json.loads(msg)
 
-    print ("movemirrornontranslated activated")
-    print(j)#pinlevelapi
+    #print ("movemirrornontranslated activated")
+    #print(j)#pinlevelapi
     if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("error",errormessage)
         return
+        
     address=mm.getMirrorAddress(j['mirror'])
 
     newmsg={}
@@ -109,7 +113,7 @@ def movemirrornontranslated(msg):
     handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
 
     newmsg['servo']=address['LR-port']
-    newmsg['angle']=j['lr'])
+    newmsg['angle']=j['lr']
     handlepinlevelapi(json.dumps(newmsg))
 
 

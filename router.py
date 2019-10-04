@@ -37,7 +37,7 @@ def routemovemirror(msg):
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
 
 
-#mosquitto_pub -t movemirrornontranslated -m '{"mirror":44,"ud":15.1,"lr":-25}'
+#mosquitto_pub -t movemirrornontranslated -m '{"mirror":44,"ud":14,"lr":144}'
 
 def routemmovemirrornontranslated(msg):
     j = json.loads(msg)
