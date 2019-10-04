@@ -166,7 +166,7 @@ def on_message(mqttc, obj, msg):
             handlepinlevelapi(payload)
         elif topic==movemirror:
             handlemovemirror(payload)
-        elif topic==movemirror:
+        elif topic==movemirrornontranslated:
             handlemovemirrornontranslated(payload)
 
     # beacuse otherwize we don't know whats wrong if something is
