@@ -20,10 +20,12 @@
 
 #configurable variables
 hub='hub1'
-mqtt_broker_address ="10.25.249.104"
-mqtt_broker_port    =1883
-pinlevelapi         =hub+'/pinlevelapi'
-movemirror          =hub+'/movemirror'
+mqtt_broker_address         ="10.25.249.104"
+mqtt_broker_port            =1883
+pinlevelapi                 =hub+'/pinlevelapi'
+movemirror                  =hub+'/movemirror'
+movemirrornontranslated     =hub+'/movemirrornontranslated'
+
 
 #@Petr:Also, can someone verify that UD;LR = 0°;0° mirror position is 82.12°;82.12°
 UD_RelativeZero=82.12
@@ -146,6 +148,8 @@ def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
         client.subscribe(pinlevelapi)
         client.subscribe(movemirror)
+        client.subscribe(movemirrornontranslated)
+        
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
@@ -162,6 +166,8 @@ def on_message(mqttc, obj, msg):
             handlepinlevelapi(payload)
         elif topic==movemirror:
             handlemovemirror(payload)
+        elif topic==movemirror:
+            movemirrornontranslated(payload)
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
