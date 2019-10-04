@@ -49,6 +49,7 @@ try:
 
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
+    
 
 #x =20#mirror UD in degrees from -30 to 30
 #y =10#mirror LR in degrees from -30 to 30
@@ -60,16 +61,13 @@ def UDservo_poly(udangle):
     #print('UDservo_poly processing time:'+str(endtime-starttime))
     return round(servoangle,2)
 
+
 def LRservo_poly (udangle, lrangle):
     #starttime = int(round(time.time() * 1000))
     servoangle=(82.15)+(1.4e-16*udangle)+(1.856*lrangle)+(0.000114*udangle**2)+(-5.438e-18*udangle*lrangle)+(-0.003402*lrangle**2)+(1.625e-18*udangle**3)+(-0.0002783*udangle**2*lrangle)+(-1.428e-18*udangle*lrangle**2)+(0.0001802*lrangle**3)+(-2.438e-07*udangle**4)+(1.728e-20*udangle**3*lrangle)+(5.568e-06*udangle**2*lrangle**2)+(2.203e-21*udangle*lrangle**3)+(4.473e-07*lrangle**4)+(-2.22e-21*udangle**5)+(3.245e-08*udangle**4*lrangle)+(1.969e-21*udangle**3*lrangle**2)+(-1.994e-07*udangle**2*lrangle**3)+(4.577e-22*udangle*lrangle**4)+(1.575e-07*lrangle**5)
     #endtime = int(round(time.time() * 1000))
     #print('LRservo_poly processing time:'+str(endtime-starttime))10. do 13. října 2019 na
     return round(servoangle,2)
-
-
-
-
 
 
 
@@ -111,7 +109,6 @@ def handlemovemirror(msg):
 
 
 
-
 def on_connect(client, userdata, flags, rc):
     try:
         print("Connected with result code "+str(rc))
@@ -121,7 +118,6 @@ def on_connect(client, userdata, flags, rc):
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
         print("Exception: "+str(e))
-
 
 
 def on_message(mqttc, obj, msg):
@@ -139,6 +135,7 @@ def on_message(mqttc, obj, msg):
         print("Exception: "+str(e))
 
 
+
 #startup code
 
 print(hub+" started up")
@@ -146,6 +143,4 @@ client = mqtt.Client(hub)
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(mqtt_broker_address,port=mqtt_broker_port)
-
-
 client.loop_forever()

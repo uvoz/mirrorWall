@@ -19,6 +19,7 @@ playframe           ='playframe'
 mqtt_broker_port    =1883
 
 
+
 def routemovemirror(msg):
     j = json.loads(msg)
     address=mm.getMirrorAddress(j['mirror'])
@@ -37,6 +38,7 @@ def handleplayframe(msg):
         print(movement)
 
 
+
 def on_connect(client, userdata, flags, rc):
     try:
         print("Connected with result code "+str(rc))
@@ -45,6 +47,7 @@ def on_connect(client, userdata, flags, rc):
     except Exception as e:
         client.publish("error", "router issue:"+str(e))
         #print("Exception: "+str(e))
+
 
 def on_message(mqttc, obj, msg):
     try:
@@ -58,8 +61,6 @@ def on_message(mqttc, obj, msg):
     except Exception as e:
         client.publish("error", "router issue:"+str(e))
         #print("Exception: "+str(e)
-
-
 
 
 
