@@ -43,12 +43,11 @@ POLICE_SERVO_MAX_SERVO_POS=144.04
 POLICE_MAX_ANGLE=30
 POLICE_MIN_ANGLE=-30
 
-
 channels_count = 16
 
 try:
     bonnets=[ServoKit(channels=channels_count , address=65)]#,ServoKit(channels=channels_count, address=65),ServoKit(channels=channels_count, address=66)
-    deltas = [{'dup':0.0,'dlr':0.0,} for n in range(channels_count)] 
+    deltas = list({'dup':0.0,'dlr':0.0,} for i in xrange(channels_count))
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
    
@@ -117,6 +116,10 @@ def handlemovemirror(msg):
 def handlecalibrate(msg):
 
     j = json.loads(msg)
+    
+    deltas[j['mirror']]['dud'] = j['dud'] 
+    deltas[j['mirror']]['dlr'] = j['dlr'] 
+
 
 
 def on_connect(client, userdata, flags, rc):
