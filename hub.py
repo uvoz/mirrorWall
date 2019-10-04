@@ -17,6 +17,13 @@
 # Example mqtt message:
 # mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
 
+import mirrormap as mm
+import sys
+import math
+import json
+import paho.mqtt.client as mqtt
+import time
+from adafruit_servokit import ServoKit
 
 #configurable variables
 hub='hub1'
@@ -24,6 +31,7 @@ mqtt_broker_address ="10.25.249.104"
 mqtt_broker_port    =1883
 pinlevelapi         =hub+'/pinlevelapi'
 movemirror          =hub+'/movemirror'
+calibrate           =hub+'/calibrate'
 
 #@Petr:Also, can someone verify that UD;LR = 0°;0° mirror position is 82.12°;82.12°
 UD_RelativeZero=82.12
@@ -35,21 +43,15 @@ POLICE_SERVO_MAX_SERVO_POS=144.04
 POLICE_MAX_ANGLE=30
 POLICE_MIN_ANGLE=-30
 
-import mirrormap as mm
-import sys
-import math
-import json
-import paho.mqtt.client as mqtt
-import time
-from adafruit_servokit import ServoKit
 
+channels_count = 16
 
 try:
-    bonnets=[ServoKit(channels=16 , address=65)]#,ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)
-
+    bonnets=[ServoKit(channels=channels_count , address=65)]#,ServoKit(channels=channels_count, address=65),ServoKit(channels=channels_count, address=66)
+    deltas = [{'dup':0.0,'dlr':0.0,} for n in range(channels_count)] 
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
-    
+   
 
 #x =20#mirror UD in degrees from -30 to 30
 #y =10#mirror LR in degrees from -30 to 30
@@ -70,6 +72,7 @@ def LRservo_poly (udangle, lrangle):
     return round(servoangle,2)
 
 
+# mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'
 
 def handlepinlevelapi(msg):
     #for x in range(10000):
@@ -84,7 +87,8 @@ def handlepinlevelapi(msg):
     #print("position bonnet:"+str(j['bonnet'])+" pin:"+str( j['servo'])+ " angle:"+str(j['angle']))
 
 
-#mosquitto_pub -t hub1/mirrorlevelapi -m '{"mirror":44,"ud":15.1,"lr":-25}'
+#mosquitto_pub -t hub1/movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
+
 def handlemovemirror(msg):
 
     j = json.loads(msg)
@@ -108,6 +112,12 @@ def handlemovemirror(msg):
     handlepinlevelapi(json.dumps(newmsg))
 
 
+#mosquitto_pub -t hub1/calibrate -m '{"mirror":44,"dud":0.2,"dlr":-1.4}'
+
+def handlecalibrate(msg):
+
+    j = json.loads(msg)
+
 
 def on_connect(client, userdata, flags, rc):
     try:
@@ -129,6 +139,8 @@ def on_message(mqttc, obj, msg):
             handlepinlevelapi(payload)
         elif topic==movemirror:
             handlemovemirror(payload)
+        elif topic==calibrate:
+            handlecalibrate(payload)
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
