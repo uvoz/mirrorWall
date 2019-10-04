@@ -27,11 +27,13 @@ from adafruit_servokit import ServoKit
 
 #configurable variables
 hub='hub1'
-mqtt_broker_address ="10.25.249.104"
-mqtt_broker_port    =1883
-pinlevelapi         =hub+'/pinlevelapi'
-movemirror          =hub+'/movemirror'
-calibrate           =hub+'/calibrate'
+
+mqtt_broker_address         ="10.25.249.104"
+mqtt_broker_port            =1883
+pinlevelapi                 =hub+'/pinlevelapi'
+movemirror                  =hub+'/movemirror'
+movemirrornontranslated     =hub+'/movemirrornontranslated'
+calibrate                   =hub+'/calibrate'
 
 #@Petr:Also, can someone verify that UD;LR = 0°;0° mirror position is 82.12°;82.12°
 UD_RelativeZero=82.12
@@ -88,6 +90,31 @@ def handlepinlevelapi(msg):
 
 #mosquitto_pub -t hub1/movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
+def movemirrornontranslated(msg):
+
+    j = json.loads(msg)
+
+    print ("movemirrornontranslated activated")
+    print(j)#pinlevelapi
+    if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
+        errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
+        client.publish("error",errormessage)
+        return
+    address=mm.getMirrorAddress(j['mirror'])
+
+    newmsg={}
+    newmsg['bonnet']=address['bonnet']
+    newmsg['servo']=address['UD-port']
+    newmsg['angle']=j['ud']
+
+    handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
+
+    newmsg['servo']=address['LR-port']
+    newmsg['angle']=j['lr'])
+    handlepinlevelapi(json.dumps(newmsg))
+
+
+
 def handlemovemirror(msg):
 
     j = json.loads(msg)
@@ -127,6 +154,8 @@ def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
         client.subscribe(pinlevelapi)
         client.subscribe(movemirror)
+        client.subscribe(movemirrornontranslated)
+        
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
@@ -141,7 +170,8 @@ def on_message(mqttc, obj, msg):
         if topic==pinlevelapi:
             handlepinlevelapi(payload)
         elif topic==movemirror:
-            handlemovemirror(payload)
+            #handlemovemirror(payload)
+            movemirrornontranslated(payload)
         elif topic==calibrate:
             handlecalibrate(payload)
 
