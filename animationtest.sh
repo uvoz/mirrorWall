@@ -1,0 +1,1 @@
+mosquitto_pub -h 10.25.249.104 -t playanimation -f animationtest.json
