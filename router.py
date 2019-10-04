@@ -4,7 +4,7 @@
 # This module is a central router that receives mirror movements, frames and animations
 #it listens to messages sent to the movemirror topic, retrieves the hub address and forwards the message to the hub
 #no validation is made her to keep it light. Validation is done distributed by all hubs.
-#mosquitto_pub -t movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
+
 import mirrormap as mm
 import sys
 import json
@@ -16,9 +16,11 @@ import time
 mqtt_broker_address ="127.0.0.1"
 movemirror          ='movemirror'
 playframe           ='playframe'
+calibrate           ='calibrate'
 mqtt_broker_port    =1883
 
 
+#mosquitto_pub -t movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
 def routemovemirror(msg):
     j = json.loads(msg)
@@ -38,6 +40,16 @@ def handleplayframe(msg):
         print(movement)
 
 
+#mosquitto_pub -t calibrate -m '{"mirror": 41,"dud": -1.2,"dlr": 0}'
+
+def routecalibrate(msg):
+    j = json.loads(msg)
+    address=mm.getMirrorAddress(j['mirror'])
+    hub=address['hub']
+    #print("routing to hub "+str(hub)+": "+json.dumps(j))
+    client.publish("hub"+str(hub)+"/"+calibrate,msg)
+
+
 
 def on_connect(client, userdata, flags, rc):
     try:
@@ -53,11 +65,14 @@ def on_message(mqttc, obj, msg):
     try:
         print(msg.topic)
         payload = msg.payload.decode("utf-8")
+
         if msg.topic==movemirror:
             routemovemirror(payload)
-
-        if msg.topic==playframe:
+        elif msg.topic==playframe:
             handleplayframe(payload)
+        elif msg.topic==calibrate:
+            routecalibrate(payload)
+
     except Exception as e:
         client.publish("error", "router issue:"+str(e))
         #print("Exception: "+str(e)
