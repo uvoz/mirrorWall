@@ -111,7 +111,7 @@ def movemirrornontranslated(msg):
     handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
 
     newmsg['servo']=address['LR-port']
-    newmsg['angle']=j['lr'])
+    newmsg['angle']=j['lr']
     handlepinlevelapi(json.dumps(newmsg))
 
 
