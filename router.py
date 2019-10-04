@@ -19,7 +19,8 @@ playframe               ='playframe'
 playanimation           ='playanimation'
 mqtt_broker_port        =1883
 
-     
+
+
 def routemovemirror(msg):
     j = json.loads(msg)
     address=mm.getMirrorAddress(j['mirror'])
@@ -29,7 +30,7 @@ def routemovemirror(msg):
 
 
 #mosquitto_pub -t playframe -m '{"Frame": "some name you give to it","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
-    
+
 def handleplayframe(msg):
     j = json.loads(msg)
     #print("handleplayframe invoked")
@@ -59,15 +60,15 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe(playanimation)    
     except Exception as e:
         client.publish("error", "router issue:"+str(e))
-        #print("Exception c: "+str(e))
-    
+
+
 def on_message(mqttc, obj, msg):
     try:
         #print(msg.topic)
         payload = msg.payload.decode("utf-8")
-        if msg.topic==movemirror:        
+        if msg.topic==movemirror:
             routemovemirror(payload)
-        elif msg.topic==playframe:        
+        elif msg.topic==playframe:      
             handleplayframe(payload)
         elif msg.topic==playanimation:
             handleplayanimation(payload)
@@ -82,7 +83,6 @@ def on_message(mqttc, obj, msg):
 
 #startup code
 client = mqtt.Client("router")
-#client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(mqtt_broker_address,port=mqtt_broker_port)
