@@ -9,7 +9,7 @@ It lives on mosquitto MQTT.
 
 
 # How to use from the outside:
-## Move a mirror using translation of angles to servo angles: 
+## Move a mirror using translation of angles to servo angles(that is slow): 
 
  mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
  
@@ -17,6 +17,10 @@ It lives on mosquitto MQTT.
 ## play a frame containing multiple/all mirror positions (using translation of angles above)
  
  #mosquitto_pub -t playframe -m '{"Frame": "some name you give to the frame","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
+ 
+ ## play a animation consisting out of frames above)
+ mosquitto_pub -t playanimation -m '{"Animation": "some name you give to it","frames": [{"Frame": "some name you give to it","movements": [ {"mirror": 44,"ud": 1,"lr": 10}]}]}'
+def handleplayanimation(msg):
  
 
 
