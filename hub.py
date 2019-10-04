@@ -87,6 +87,35 @@ def handlepinlevelapi(msg):
 
 
 #mosquitto_pub -t hub1/mirrorlevelapi -m '{"mirror":44,"ud":15.1,"lr":-25}'
+
+
+def movemirrornontranslated(msg):
+
+    j = json.loads(msg)
+
+    print ("movemirrornontranslated activated")
+    print(j)#pinlevelapi
+    if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
+        errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
+        client.publish("error",errormessage)
+        return
+    address=mm.getMirrorAddress(j['mirror'])
+
+    newmsg={}
+    newmsg['bonnet']=address['bonnet']
+    newmsg['servo']=address['UD-port']
+    newmsg['angle']=j['ud']
+
+    handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
+
+    newmsg['servo']=address['LR-port']
+    newmsg['angle']=j['lr'])
+    handlepinlevelapi(json.dumps(newmsg))
+
+
+
+
+
 def handlemovemirror(msg):
 
     j = json.loads(msg)

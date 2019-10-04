@@ -5,6 +5,9 @@
 #it listens to messages sent to the movemirror topic, retrieves the hub address and forwards the message to the hub
 #no validation is made her to keep it light. Validation is done distributed by all hubs.
 #mosquitto_pub -t movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
+
+#mosquitto_pub -t movemirrornontranslated -m '{"mirror":44,"ud":15.1,"lr":-25}'
+
 import mirrormap as mm
 import sys
 import json
@@ -15,6 +18,7 @@ import time
 #configurable variables
 mqtt_broker_address     ="127.0.0.1"
 movemirror              ='movemirror'
+movemirrornontranslated ='movemirrornontranslated'
 playframe               ='playframe'
 playanimation           ='playanimation'
 mqtt_broker_port        =1883
@@ -27,6 +31,15 @@ def routemovemirror(msg):
     hub=address['hub']
     print("routing to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
+
+def routemmovemirrornontranslated(msg):
+    j = json.loads(msg)
+    address=mm.getMirrorAddress(j['mirror'])
+    hub=address['hub']
+    print("routing untranslated to hub "+str(hub)+": "+json.dumps(j))
+    client.publish("hub"+str(hub)+"/"+movemirrornontranslated,msg)
+
+
 
 
 #mosquitto_pub -t playframe -m '{"Frame": "some name you give to it","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
@@ -56,6 +69,7 @@ def on_connect(client, userdata, flags, rc):
     try:
         print("Connected with result code "+str(rc))
         client.subscribe(movemirror)
+        client.subscribe(movemirrornontranslated)
         client.subscribe(playframe)
         client.subscribe(playanimation)    
     except Exception as e:
@@ -64,10 +78,12 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(mqttc, obj, msg):
     try:
-        #print(msg.topic)
+        print(msg.topic)
         payload = msg.payload.decode("utf-8")
         if msg.topic==movemirror:
             routemovemirror(payload)
+        elif msg.topic==movemirrornontranslated:
+            routemmovemirrornontranslated(payload)  
         elif msg.topic==playframe:      
             handleplayframe(payload)
         elif msg.topic==playanimation:
