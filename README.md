@@ -2,12 +2,7 @@
 This is the software that flows messages to the mirror wall.
 It lives on mosquitto MQTT.
 
-# Todo: 
-
-1. parse entire animations and submit each frame to the playframe handler.
-
-
-
+# 
 # How to use from the outside:
 ## Move a mirror using translation of angles to servo angles(that is slow): 
 
