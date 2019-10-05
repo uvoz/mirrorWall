@@ -47,7 +47,7 @@ from adafruit_servokit import ServoKit
 
 
 try:
-    bonnets=[ServoKit(channels=16 , address=65)]#,ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)
+    bonnets=[ServoKit(channels=16 , address=64),ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)]
 
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
@@ -180,7 +180,7 @@ with open("config.json", 'r') as f:
     mqtt_broker_address     =configdata["mqtt_broker_address"]
     mqtt_broker_port        =configdata["mqtt_broker_port"]
     hub                     =configdata["hub"]
-    
+
 print(hub+" started up")
 client = mqtt.Client(hub)
 client.on_connect = on_connect
