@@ -175,7 +175,12 @@ def on_message(mqttc, obj, msg):
 
 
 #startup code
-
+with open("config.json", 'r') as f:
+    configdata = json.load(f)
+    mqtt_broker_address     =configdata["mqtt_broker_address"]
+    mqtt_broker_port        =configdata["mqtt_broker_port"]
+    hub                     =configdata["hub"]
+    
 print(hub+" started up")
 client = mqtt.Client(hub)
 client.on_connect = on_connect
