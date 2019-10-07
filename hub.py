@@ -91,7 +91,7 @@ def handlepinlevelapi(msg):
         errormessage='handlepinlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("erUDservo_polyror",errormessage)
         return
-    bonnets[j['bonnet']].servo[j['servo']].angle = 180 - j['angle']
+    bonnets[j['bonnet']].servo[j['servo']].angle = j['angle']
     #print("position bonnet:"+str(j['bonnet'])+" pin:"+str( j['servo'])+ " angle:"+str(j['angle']))
 
 
