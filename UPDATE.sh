@@ -1,5 +1,2 @@
-#git fetch --all
-#git reset --hard origin/master
-
-git pull
-reboot
+git fetch --all
+git reset --hard origin/master
