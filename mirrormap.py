@@ -73,7 +73,7 @@ mirrormappings=[
 {"mirror":42,"hub":1,"bonnet":0,"UD-port":4,"LR-port":5},
 {"mirror":43,"hub":1,"bonnet":0,"UD-port":2,"LR-port":3},
 {"mirror":44,"hub":1,"bonnet":0,"UD-port":0,"LR-port":1},
-{"mirror":45,"hub":1,"bonnet":0,"UD-port":10,"LR-port":11},
+{"mirror":45,"hub":2,"bonnet":0,"UD-port":10,"LR-port":11},
 {"mirror":46,"hub":4,"bonnet":0,"UD-port":0,"LR-port":1},
 {"mirror":47,"hub":4,"bonnet":0,"UD-port":2,"LR-port":3},
 {"mirror":48,"hub":4,"bonnet":0,"UD-port":4,"LR-port":5},
