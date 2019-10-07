@@ -1,4 +1,4 @@
 git fetch --all
-git reset --hard origin/matej
+git reset --hard origin/master
 
 sleep 30
