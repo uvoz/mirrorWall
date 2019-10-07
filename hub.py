@@ -28,12 +28,13 @@ from adafruit_servokit import ServoKit
 #@Petr:Also, can someone verify that UD;LR = 0°;0° mirror position is 82.12°;82.12°
 UD_RelativeZero=82.12
 LR_RelativeZero=82.12
-#@Petr:The "policemen script" preventing servo # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'from reaching dangerous angle should always keep it within <14.81;144.04> domain
-POLICE_SERVO_MIN_SERVO_POS=18
-POLICE_SERVO_MAX_SERVO_POS=144
 #@Pert UD mirror angle transfered to UD servo rotation results results to 2D curve extruded over domain of mirror available movements <-30;30>
 POLICE_MAX_ANGLE=30
 POLICE_MIN_ANGLE=-30
+#@Petr:The "policemen script" preventing servo # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'from reaching dangerous angle should always keep it within <14.81;144.04> domain
+POLICE_SERVO_MIN_SERVO_POS=40
+POLICE_SERVO_MAX_SERVO_POS=130
+
 
 #declaration - idk if it is needed, but here it is
 mqtt_broker_address = mqtt_broker_port = hub = pinlevelapi = movemirror = movemirrornontranslated = ""
@@ -90,7 +91,7 @@ def handlepinlevelapi(msg):
         errormessage='handlepinlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("erUDservo_polyror",errormessage)
         return
-    bonnets[j['bonnet']].servo[j['servo']].angle = j['angle']
+    bonnets[j['bonnet']].servo[j['servo']].angle = 180 - j['angle']
     #print("position bonnet:"+str(j['bonnet'])+" pin:"+str( j['servo'])+ " angle:"+str(j['angle']))
 
 
@@ -101,8 +102,8 @@ def handlemovemirrornontranslated(msg):
 
     j = json.loads(msg)
 
-    print ("movemirrornontranslated activated")
-    print(j)#pinlevelapi
+    #print ("movemirrornontranslated activated")
+    #print(j)#pinlevelapi
     if j['lr']<POLICE_SERVO_MIN_SERVO_POS or j['lr']>POLICE_SERVO_MAX_SERVO_POS or j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
         errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
         client.publish("error",errormessage)
