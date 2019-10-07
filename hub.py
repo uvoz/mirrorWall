@@ -17,26 +17,6 @@
 # Example mqtt message:
 # mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
 
-
-#configurable variables
-hub='hub1'
-mqtt_broker_address         ="10.25.249.104"
-mqtt_broker_port            =1883
-pinlevelapi                 =hub+'/pinlevelapi'
-movemirror                  =hub+'/movemirror'
-movemirrornontranslated     =hub+'/movemirrornontranslated'
-
-
-#@Petr:Also, can someone verify that UD;LR = 0°;0° mirror position is 82.12°;82.12°
-UD_RelativeZero=82.12
-LR_RelativeZero=82.12
-#@Petr:The "policemen script" preventing servo # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'from reaching dangerous angle should always keep it within <14.81;144.04> domain
-POLICE_SERVO_MIN_SERVO_POS=14.81
-POLICE_SERVO_MAX_SERVO_POS=144.04
-#@Pert UD mirror angle transfered to UD servo rotation results results to 2D curve extruded over domain of mirror available movements <-30;30>
-POLICE_MAX_ANGLE=30
-POLICE_MIN_ANGLE=-30
-
 import mirrormap as mm
 import sys
 import math
@@ -45,6 +25,30 @@ import paho.mqtt.client as mqtt
 import time
 from adafruit_servokit import ServoKit
 
+#@Petr:Also, can someone verify that UD;LR = 0°;0° mirror position is 82.12°;82.12°
+UD_RelativeZero=82.12
+LR_RelativeZero=82.12
+#@Petr:The "policemen script" preventing servo # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'from reaching dangerous angle should always keep it within <14.81;144.04> domain
+POLICE_SERVO_MIN_SERVO_POS=18
+POLICE_SERVO_MAX_SERVO_POS=144
+#@Pert UD mirror angle transfered to UD servo rotation results results to 2D curve extruded over domain of mirror available movements <-30;30>
+POLICE_MAX_ANGLE=30
+POLICE_MIN_ANGLE=-30
+
+#declaration - idk if it is needed, but here it is
+mqtt_broker_address = mqtt_broker_port = hub = pinlevelapi = movemirror = movemirrornontranslated = ""
+
+#configurable variables
+with open("config.json", 'r') as f:
+    configdata = json.load(f)
+    mqtt_broker_address         =str(configdata["mqtt_broker_address"])
+    mqtt_broker_port            =int(configdata["mqtt_broker_port"])
+    hub                         =configdata["hub"]
+    pinlevelapi                 =hub+'/pinlevelapi'
+    movemirror                  =hub+'/movemirror'
+    movemirrornontranslated     =hub+'/movemirrornontranslated'
+    
+  
 
 try:
     bonnets=[ServoKit(channels=16 , address=64),ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)]
@@ -55,12 +59,14 @@ except:
 #x =20#mirror UD in degrees from -30 to 30
 #y =10#mirror LR in degrees from -30 to 30
 
+
 def UDservo_poly(udangle):
     #starttime = int(round(time.time() * 1000))
     servoangle=(2.752e-12*udangle**8)+(1.701e-10*udangle**7)-(3.189e-09*udangle**6)-(4.918e-08*udangle**5)+(5.804e-07*udangle**4)+(0.0002402*udangle**3)-(0.002954*udangle**2)+(1.853*udangle)+(82.13)
     #endtime = int(round(time.time() * 1000))
     #print('UDservo_poly processing time:'+str(endtime-starttime))
     return round(servoangle,2)
+    
 
 def LRservo_poly (udangle, lrangle):
     #starttime = int(round(time.time() * 1000))
@@ -73,7 +79,7 @@ def LRservo_poly (udangle, lrangle):
 
 
 
-
+#mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'
 
 def handlepinlevelapi(msg):
     #for x in range(10000):
@@ -88,8 +94,8 @@ def handlepinlevelapi(msg):
     #print("position bonnet:"+str(j['bonnet'])+" pin:"+str( j['servo'])+ " angle:"+str(j['angle']))
 
 
-#mosquitto_pub -t hub1/mirrorlevelapi -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
+#mosquitto_pub -t hub1/movemirrornontranslated -m '{"mirror":44,"ud":30,"lr":80}'
 
 def handlemovemirrornontranslated(msg):
 
@@ -116,7 +122,7 @@ def handlemovemirrornontranslated(msg):
 
 
 
-
+#mosquitto_pub -t hub1/movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
 def handlemovemirror(msg):
 
@@ -148,13 +154,12 @@ def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
         client.subscribe(pinlevelapi)
         client.subscribe(movemirror)
-        client.subscribe(movemirrornontranslated)
-        
+        client.subscribe(movemirrornontranslated)    
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
-        print("Exception: "+str(e))
-
+        #print("Exception: "+str(e))
+        client.publish("error", hub+" on_connect issue:"+str(e))
 
 
 def on_message(mqttc, obj, msg):
@@ -171,17 +176,11 @@ def on_message(mqttc, obj, msg):
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
-        print("Exception: "+str(e))
+        #print("Exception: "+str(e))
+        client.publish("error", hub+" on_message issue:"+str(e))
 
 
-#startup code
-with open("config.json", 'r') as f:
-    configdata = json.load(f)
-    mqtt_broker_address     =configdata["mqtt_broker_address"]
-    mqtt_broker_port        =configdata["mqtt_broker_port"]
-    hub                     =configdata["hub"]
-
-print(hub+" started up")
+print(hub + " staring up")
 client = mqtt.Client(hub)
 client.on_connect = on_connect
 client.on_message = on_message

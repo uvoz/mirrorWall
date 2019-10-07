@@ -14,32 +14,39 @@ import json
 import paho.mqtt.client as mqtt
 import time
 
+#declaration - idk if it is needed, but here it is
+mqtt_broker_address = mqtt_broker_port = movemirror = movemirrornontranslated = playframe = playanimation = router = ""
 
 #configurable variables
-mqtt_broker_address     ="10.25.249.104"
-movemirror              ='movemirror'
-movemirrornontranslated ='movemirrornontranslated'
-playframe               ='playframe'
-playanimation           ='playanimation'
-mqtt_broker_port        =1883
+with open("config.json", 'r') as f:
+    configdata = json.load(f)
+    mqtt_broker_address     =str(configdata["mqtt_broker_address"])
+    mqtt_broker_port        =int(configdata["mqtt_broker_port"])
+    router                  ='router'
+    movemirror              ='movemirror'
+    movemirrornontranslated ='movemirrornontranslated'
+    playframe               ='playframe'
+    playanimation           ='playanimation'
+  
 
-
+#mosquitto_pub -t movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
 def routemovemirror(msg):
     j = json.loads(msg)
     address=mm.getMirrorAddress(j['mirror'])
     hub=address['hub']
-    print("routing to hub "+str(hub)+": "+json.dumps(j))
+    #print("routing to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
+    
+    
+#mosquitto_pub -t movemirrornontranslated -m '{"mirror":44,"ud":100,"lr":25}'
 
 def routemmovemirrornontranslated(msg):
     j = json.loads(msg)
     address=mm.getMirrorAddress(j['mirror'])
     hub=address['hub']
-    print("routing untranslated to hub "+str(hub)+": "+json.dumps(j))
+    #print("routing untranslated to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirrornontranslated,msg)
-
-
 
 
 #mosquitto_pub -t playframe -m '{"Frame": "some name you give to it","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
@@ -54,8 +61,8 @@ def handleplayframe(msg):
         #print(movement)
 
 
-
 #mosquitto_pub -t playanimation -m '{"Animation": "some name you give to it","frames": [{"Frame": "some name you give to it","movements": [ {"mirror": 44,"ud": 1,"lr": 10}]}]}'
+
 def handleplayanimation(msg):
     j = json.loads(msg)
     #print (j)
@@ -66,20 +73,21 @@ def handleplayanimation(msg):
 
 
 def on_connect(client, userdata, flags, rc):
-    try:
+    try:   
         print("Connected with result code "+str(rc))
         client.subscribe(movemirror)
         client.subscribe(movemirrornontranslated)
         client.subscribe(playframe)
-        client.subscribe(playanimation)    
+        client.subscribe(playanimation)   
+        
     except Exception as e:
-        client.publish("error", "router issue:"+str(e))
+        client.publish("error", router + " on_connect issue:"+str(e))
 
 
 def on_message(mqttc, obj, msg):
-    try:
-        print(msg.topic)
-        payload = msg.payload.decode("utf-8")
+    try:   
+        #print(msg.topic)
+        payload = msg.payload.decode("utf-8")      
         if msg.topic==movemirror:
             routemovemirror(payload)
         elif msg.topic==movemirrornontranslated:
@@ -88,24 +96,12 @@ def on_message(mqttc, obj, msg):
             handleplayframe(payload)
         elif msg.topic==playanimation:
             handleplayanimation(payload)
+            
     except Exception as e:
-        #print("Exception m: "+str(e))
-        client.publish("error", "router issue:"+str(e))
+        client.publish("error", router + " on_message issue:"+str(e))
         
 
-
-
-
-
-#startup code
-with open("config.json", 'r') as f:
-    configdata = json.load(f)
-    mqtt_broker_address     =configdata["mqtt_broker_address"]
-    mqtt_broker_port        =configdata["mqtt_broker_port"]
-    hub                     =configdata["hub"]
-      
-
-client = mqtt.Client("router")
+client = mqtt.Client(router)
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(mqtt_broker_address,port=mqtt_broker_port)
