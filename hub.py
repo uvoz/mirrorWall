@@ -32,8 +32,11 @@ LR_RelativeZero=82.12
 POLICE_MAX_ANGLE=30
 POLICE_MIN_ANGLE=-30
 #@Petr:The "policemen script" preventing servo # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'from reaching dangerous angle should always keep it within <14.81;144.04> domain
-POLICE_SERVO_MIN_SERVO_POS=40
-POLICE_SERVO_MAX_SERVO_POS=130
+POLICE_SERVO_MIN_SERVO_POS=16
+POLICE_SERVO_MAX_SERVO_POS=142
+#Matej: servo calibration
+SERVO_PULSE_MIN=910
+SERVO_PULSE_MAX=2260
 
 
 #declaration - idk if it is needed, but here it is
@@ -53,6 +56,9 @@ with open("config.json", 'r') as f:
 
 try:
     bonnets=[ServoKit(channels=16 , address=64),ServoKit(channels=16, address=65),ServoKit(channels=16, address=66)]
+    for b in range(len(bonnets)):
+        for i in range(16):
+            bonnets[b].servo[i].set_pulse_width_range(SERVO_PULSE_MIN, SERVO_PULSE_MAX)
 
 except:
     print("Problem with bonnets ?!:", sys.exc_info()[0])
