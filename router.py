@@ -23,44 +23,45 @@ with open("config.json", 'r') as f:
     mqtt_broker_address     =str(configdata["mqtt_broker_address"])
     mqtt_broker_port        =int(configdata["mqtt_broker_port"])
     router                  ='router'
-    movemirror              ='movemirror'
-    movemirrornontranslated ='movemirrornontranslated'
-    playframe               ='playframe'
-    playanimation           ='playanimation'
+    movemirror              ='movmir'
+    movemirrornontranslated ='movnon'
+    playframe               ='playfr'
+    playanimation           ='playan'
   
 
-#mosquitto_pub -t movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
+#mosquitto_pub -t movmir -m '{"mi":44,"ud":15.1,"lr":-25}'
 
 def routemovemirror(msg):
     j = json.loads(msg)
-    address=mm.getMirrorAddress(j['mirror'])
+    address=mm.getMirrorAddress(j['mi'])
     hub=address['hub']
     #print("routing to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirror,msg)
     
     
-#mosquitto_pub -t movemirrornontranslated -m '{"mirror":44,"ud":100,"lr":25}'
+#mosquitto_pub -t movnon -m '{"mi":44,"ud":100,"lr":25}'
 
 def routemmovemirrornontranslated(msg):
     j = json.loads(msg)
-    address=mm.getMirrorAddress(j['mirror'])
+    address=mm.getMirrorAddress(j['mi'])
     hub=address['hub']
     #print("routing untranslated to hub "+str(hub)+": "+json.dumps(j))
     client.publish("hub"+str(hub)+"/"+movemirrornontranslated,msg)
 
 
-#mosquitto_pub -t playframe -m '{"Frame": "some name you give to it","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
+#mosquitto_pub -t playfr -m '{"pos":[{"mi":41,"ud":20,"lr":20},{"mi": 42,"ud":20,"lr":20},{"mi":44,"ud":1,"lr":10}]}'
 
 def handleplayframe(msg):
     j = json.loads(msg)
     #print("handleplayframe invoked")
     #print (j)
-    for movement in j['movements']:
+    for movement in j['pos']:
         routemmovemirrornontranslated(json.dumps(movement))
         #print("movement seen")
         #print(movement)
 
 
+'''
 #mosquitto_pub -t playanimation -m '{"Animation": "some name you give to it","frames": [{"Frame": "some name you give to it","movements": [ {"mirror": 44,"ud": 1,"lr": 10}]}]}'
 
 def handleplayanimation(msg):
@@ -69,12 +70,12 @@ def handleplayanimation(msg):
     for frame in j['frames']:
         handleplayframe(json.dumps(frame))
         #print("call handleplayfram>=:"+json.dumps(frame))
-
+'''
 
 
 def on_connect(client, userdata, flags, rc):
-    try:   
-        print("Connected with result code "+str(rc))
+    print("Connected with result code "+str(rc))
+    try:          
         client.subscribe(movemirror)
         client.subscribe(movemirrornontranslated)
         client.subscribe(playframe)

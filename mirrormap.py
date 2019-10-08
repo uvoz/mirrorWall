@@ -130,13 +130,18 @@ mirrormappings=[
 
 def getMirrorAddress(mirror):
     if mirror<0 or mirror>90:
-        raise Exception('mirrormap', 'invalid mirror ID:'+str(mirror))
+        raise Exception('error', 'mirrormap.py invalid mirror ID:'+str(mirror))
     return (mirrormappings[mirror])
+    
+def getMirrorHubAddress(mirror):
+    if mirror<0 or mirror>90:
+        raise Exception('error', 'mirrormap.py invalid mirror ID:'+str(mirror))
+    return (mirrormappings[mirror]['mirror_hub'])
     
   
 def getMirroHub(mirror):
     if mirror<0 or mirror>90:
-        raise Exception('mirrormap', 'invalid mirror ID:'+str(mirror))
+        raise Exception('error', 'mirrormap.py invalid mirror ID:'+str(mirror))
     return (mirrormappings[mirror]['hub'])
 
 
