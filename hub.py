@@ -122,7 +122,7 @@ def handleMoveServos(msg):
     if j['mi']>=0 and j['mi']<=90:
         if not (j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS):
             moveServo(adresses['bonnet'], adresses['UD-port'], j['ud'])
-        else    
+        else:    
             errormessage='moveservos invalid UD:'+json.dumps(j)
             client.publish("error",errormessage)
                
@@ -148,7 +148,7 @@ def handleMoveMirror(msg):
     if j['mi']>=0 and j['mi']<=90:
         if not (j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS):
             moveServo(adresses['bonnet'], adresses['UD-port'], translateUdPoly(j['ud']))
-        else    
+        else:
             errormessage='moveservos invalid UD:'+json.dumps(j)
             client.publish("error",errormessage)
                
