@@ -31,9 +31,11 @@ LR_RelativeZero=82.12
 #@Pert UD mirror angle transfered to UD servo rotation results results to 2D curve extruded over domain of mirror available movements <-30;30>
 POLICE_MAX_ANGLE=30
 POLICE_MIN_ANGLE=-30
-#@Petr:The "policemen script" preventing servo # mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'from reaching dangerous angle should always keep it within <14.81;144.04> domain
+
+#@Petr:The "policemen script" preventing servo from reaching dangerous angle should always keep it within <14.81;144.04> domain
 POLICE_SERVO_MIN_SERVO_POS=16
-POLICE_SERVO_MAX_SERVO_POS=142
+POLICE_SERVO_MAX_SERVO_POS=145
+
 #Matej: servo calibration
 SERVO_PULSE_MIN=910
 SERVO_PULSE_MAX=2260
@@ -48,9 +50,9 @@ with open("config.json", 'r') as f:
     mqtt_broker_address         =str(configdata["mqtt_broker_address"])
     mqtt_broker_port            =int(configdata["mqtt_broker_port"])
     hub                         =configdata["hub"]
-    pinlevelapi                 =hub+'/pinlevelapi'
-    movemirror                  =hub+'/movemirror'
-    movemirrornontranslated     =hub+'/movemirrornontranslated'
+    pinlevelapi                 =hub+'/pinlvl'
+    movemirror                  =hub+'/movmir'
+    movemirrornontranslated     =hub+'/movnon'
     
   
 
@@ -86,23 +88,23 @@ def LRservo_poly (udangle, lrangle):
 
 
 
-#mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'
+
+#mosquitto_pub -t hub1/pinlvl -m '{"bo":0,"se":0,"an":100}'
 
 def handlepinlevelapi(msg):
     #for x in range(10000):
     j = json.loads(msg)
 
     #print(j)
-    if j['bonnet']<0 or j['bonnet']>2 or j['servo']<0 or j['servo']>15 or j['angle']<POLICE_SERVO_MIN_SERVO_POS or j['angle']>POLICE_SERVO_MAX_SERVO_POS:# or j['angle'] <-30 or j['angle']>30:
+    if j['bo']<0 or j['bo']>2 or j['se']<0 or j['se']>15 or j['an']<POLICE_SERVO_MIN_SERVO_POS or j['an']>POLICE_SERVO_MAX_SERVO_POS:
         errormessage='handlepinlevelapi received invalid parameters:'+json.dumps(j)
-        client.publish("erUDservo_polyror",errormessage)
+        client.publish("error", errormessage)
         return
-    bonnets[j['bonnet']].servo[j['servo']].angle = j['angle']
-    #print("position bonnet:"+str(j['bonnet'])+" pin:"+str( j['servo'])+ " angle:"+str(j['angle']))
+    bonnets[j['bo']].servo[j['se']].angle = j['an']
 
 
 
-#mosquitto_pub -t hub1/movemirrornontranslated -m '{"mirror":44,"ud":30,"lr":80}'
+#mosquitto_pub -t hub1/movnon -m '{"mi":44,"ud":30,"lr":80}'
 
 def handlemovemirrornontranslated(msg):
 
@@ -110,55 +112,56 @@ def handlemovemirrornontranslated(msg):
 
     #print ("movemirrornontranslated activated")
     #print(j)#pinlevelapi
-    if j['lr']<POLICE_SERVO_MIN_SERVO_POS or j['lr']>POLICE_SERVO_MAX_SERVO_POS or j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
-        errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
+    if j['lr']<POLICE_SERVO_MIN_SERVO_POS or j['lr']>POLICE_SERVO_MAX_SERVO_POS or j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS or j['mi']<0 or j['mi']>90:
+        errormessage='movemirrornontranslated received invalid parameters:'+json.dumps(j)
         client.publish("error",errormessage)
         return
-    address=mm.getMirrorAddress(j['mirror'])
+        
+    address=mm.getMirrorAddress(j['mi'])
 
     newmsg={}
-    newmsg['bonnet']=address['bonnet']
-    newmsg['servo']=address['UD-port']
-    newmsg['angle']=j['ud']
+    newmsg['bo']=address['bonnet']
+    newmsg['se']=address['UD-port']
+    newmsg['an']=j['ud']
 
     handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
 
-    newmsg['servo']=address['LR-port']
-    newmsg['angle']=j['lr']
+    newmsg['se']=address['LR-port']
+    newmsg['an']=j['lr']
     handlepinlevelapi(json.dumps(newmsg))
 
 
 
-#mosquitto_pub -t hub1/movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
+#mosquitto_pub -t hub1/movmir -m '{"mi":44,"ud":15.1,"lr":-25}'
 
 def handlemovemirror(msg):
 
     j = json.loads(msg)
 
-    #print(j)#pinlevelapi
-    if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mirror']<0 or j['mirror']>90:# or j['angle'] <-30 or j['angle']>30:
-        errormessage='handlemirrorlevelapi received invalid parameters:'+json.dumps(j)
+    if j['lr']<POLICE_MIN_ANGLE or j['lr']>POLICE_MAX_ANGLE or j['ud']<POLICE_MIN_ANGLE or j['ud']>POLICE_MAX_ANGLE or j['mi']<0 or j['mi']>90:
+        errormessage='movemirror received invalid parameters: '+json.dumps(j)
         client.publish("error",errormessage)
         return
-    address=mm.getMirrorAddress(j['mirror'])
+        
+    address=mm.getMirrorAddress(j['mi'])
 
     newmsg={}
-    newmsg['bonnet']=address['bonnet']
-    newmsg['servo']=address['UD-port']
-    newmsg['angle']=UDservo_poly(j['ud'])
+    newmsg['bo']=address['bonnet']
+    newmsg['se']=address['UD-port']
+    newmsg['an']=UDservo_poly(j['ud'])
 
     handlepinlevelapi(json.dumps(newmsg, sort_keys=True))
 
-    newmsg['servo']=address['LR-port']
-    newmsg['angle']=LRservo_poly(j['ud'],j['lr'])
+    newmsg['se']=address['LR-port']
+    newmsg['an']=LRservo_poly(j['ud'],j['lr'])
     handlepinlevelapi(json.dumps(newmsg))
 
 
 
 
 def on_connect(client, userdata, flags, rc):
-    try:
-        print("Connected with result code "+str(rc))
+    print("Connected with result code "+str(rc))
+    try:      
         client.subscribe(pinlevelapi)
         client.subscribe(movemirror)
         client.subscribe(movemirrornontranslated)    
@@ -187,7 +190,7 @@ def on_message(mqttc, obj, msg):
         client.publish("error", hub+" on_message issue:"+str(e))
 
 
-print(hub + " staring up")
+print(hub + " staring up...")
 client = mqtt.Client(hub)
 client.on_connect = on_connect
 client.on_message = on_message
