@@ -27,7 +27,6 @@ hubmappings={
 {"mirror_hub":2,"mirror":54,"hub":1,"bonnet":0,"UD-port":6,"LR-port":7},
 {"mirror_hub":3,"mirror":42,"hub":1,"bonnet":0,"UD-port":4,"LR-port":5},
 {"mirror_hub":4,"mirror":53,"hub":1,"bonnet":0,"UD-port":8,"LR-port":9},
-{"mirror_hub":4,"mirror":53,"hub":1,"bonnet":0,"UD-port":8,"LR-port":9},
 {"mirror_hub":5,"mirror":63,"hub":1,"bonnet":2,"UD-port":4,"LR-port":5},
 {"mirror_hub":6,"mirror":41,"hub":1,"bonnet":1,"UD-port":6,"LR-port":7},
 {"mirror_hub":7,"mirror":52,"hub":1,"bonnet":1,"UD-port":8,"LR-port":9},
