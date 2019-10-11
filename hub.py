@@ -33,7 +33,7 @@ POLICE_MAX_ANGLE=30
 POLICE_MIN_ANGLE=-30
 #@Petr:The "policemen script" preventing servo from reaching dangerous angle should always keep it within <14.81;144.04> domain
 POLICE_SERVO_MIN_SERVO_POS=16
-POLICE_SERVO_MAX_SERVO_POS=142
+POLICE_SERVO_MAX_SERVO_POS=145
 #Matej: servo calibration
 SERVO_PULSE_MIN=910
 SERVO_PULSE_MAX=2260
