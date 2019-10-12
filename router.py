@@ -5,9 +5,6 @@
 # This module is a central router that receives mirror movements, frames and animations
 #it listens to messages sent to the movemirror topic, retrieves the hub address and forwards the message to the hub
 #no validation is made her to keep it light. Validation is done distributed by all hubs.
-#mosquitto_pub -t movemirror -m '{"mirror":44,"ud":15.1,"lr":-25}'
-
-#mosquitto_pub -t moveservos -m '{"mirror":44,"ud":15.1,"lr":-25}'
 
 import mirrormap as mm
 import sys
@@ -16,7 +13,7 @@ import paho.mqtt.client as mqtt
 import time
 
 #declaration - idk if it is needed, but here it is
-mqtt_broker_address = mqtt_broker_port = movemirror = moveservos = playframe = playanimation = router = calibrate = ""
+mqtt_broker_address = mqtt_broker_port = movemirror = moveservos = playframe = playframe_raw = playanimation = router = calibrate = ""
 
 #configurable variables
 with open("config.json", 'r') as f:
@@ -28,7 +25,8 @@ with open("config.json", 'r') as f:
     moveservos              ='movser'
     calibrate               ='calibr'
     playframe               ='playfr'
-    #playanimation           ='playan'
+    playframe_raw           ='playfr_raw'
+    #playanimation          ='playan'
   
   
 
@@ -92,6 +90,19 @@ def handlePlayFrame(msg):
         #print(movement)
 
 
+#mosquitto_pub -t playfr_raw -m '50.0;21.11;33;14;50.0;21.11'     # 'up0;lr0;up1;lr1; ... ;up90;lr90'
+
+def handlePlayFrameRaw(s):
+    #CSV format
+    s.split(';')
+    
+    for i in range(0, len(s), 2):
+        mov = {}
+        mov['mi'] = i//2
+        mov['ud'] = int(s[i])
+        mov['lr'] = int(s[i+1])
+        routeMoveServos(json.dumps(mov))
+
 '''
 #mosquitto_pub -t playanimation -m '{"Animation": "some name you give to it","frames": [{"Frame": "some name you give to it","movements": [ {"mirror": 44,"ud": 1,"lr": 10}]}]}'
 
@@ -106,12 +117,14 @@ def handlePlayAnimation(msg):
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    try:          
-        client.subscribe(movemirror)
-        client.subscribe(moveservos)
-        client.subscribe(playframe)
-        #client.subscribe(playanimation)   
-        client.subscribe(calibrate) 
+    try:       
+        #client.subscribe(topic,QoS)
+        client.subscribe(movemirror,0)
+        client.subscribe(moveservos,0)
+        client.subscribe(playframe,0)
+        client.subscribe(playframe_raw,0)
+        #client.subscribe(playanimation,0)   
+        client.subscribe(calibrate,1) 
         
     except Exception as e:
         client.publish("error", router + " on_connect issue:"+str(e))
@@ -129,6 +142,8 @@ def on_message(mqttc, obj, msg):
             routeCalibrate(payload)
         elif msg.topic==playframe:      
             handlePlayFrame(payload)
+        elif msg.topic==playframe_raw:
+            handlePlayFrameRaw(payload)
         #elif msg.topic==playanimation:
         #    handlePlayAnimation(payload)
 

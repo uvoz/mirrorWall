@@ -7,7 +7,7 @@
 
 # 1- remote control each servo separately. no translation=blind fast.
 # Example mqtt message:
-# mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":100}'
+# mosquitto_pub -t hub1/pinlev -m '{"bo":0,"se":0,"an":100}'
 #topic (-t) is the hub you send the message to
 #servo is the servo you like to move (0-15)
 #angle is the target angle of the servo
@@ -16,7 +16,7 @@
 # the mirror address is picked up in the mirror-map, the angles given in real degrees are translated in proper servo angles.
 # this is very compute intensive so expect 8 frames/second for the entire mirror grid.
 # Example mqtt message:
-# mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
+# mosquitto_pub -h 127.0.0.1 -t movmir -m '{"mi":44,"ud":-20.1,"lr":13.3}'
 
 import mirrormap as mm
 import sys
@@ -54,7 +54,7 @@ with open("config.json", 'r') as f:
     mqtt_broker_address         =str(configdata["mqtt_broker_address"])
     mqtt_broker_port            =int(configdata["mqtt_broker_port"])
     hub                         =configdata["hub"]
-    pinlevelapi                 =hub+'/pinlvl'
+    pinlevelapi                 =hub+'/pinlev'
     movemirror                  =hub+'/movmir'
     moveservos                  =hub+'/movser'
     calibrate                   =hub+'/calibr'
@@ -96,7 +96,7 @@ def moveServo(bonnet, port, angl):
     
     
 
-#mosquitto_pub -t hub1/pinlvl -m '{"bo":0,"se":0,"an":100}'
+#mosquitto_pub -t hub1/pinlev -m '{"bo":0,"se":0,"an":100}'
 
 def handlePinLevelApi(msg):
     #for x in range(10000):
@@ -182,10 +182,11 @@ def handleCalibrate(msg):
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     try:      
-        client.subscribe(pinlevelapi)
-        client.subscribe(movemirror)
-        client.subscribe(moveservos) 
-        client.subscribe(calibrate)        
+        #client.subscribe(topic,QoS)
+        client.subscribe(pinlevelapi,0)
+        client.subscribe(movemirror,0)
+        client.subscribe(moveservos,0) 
+        client.subscribe(calibrate,1)        
 
     # beacuse otherwize we don't know whats wrong if something is
     except Exception as e:
