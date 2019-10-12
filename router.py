@@ -13,7 +13,7 @@ import paho.mqtt.client as mqtt
 import time
 
 #declaration - idk if it is needed, but here it is
-mqtt_broker_address = mqtt_broker_port = movemirror = moveservos = playframe = playframe_raw = playanimation = router = calibrate = ""
+mqtt_broker_address = mqtt_broker_port = movemirror = moveservos = playframe = playframe_raw = playframe_hex = playanimation = router = calibrate = ""
 
 #configurable variables
 with open("config.json", 'r') as f:
@@ -26,6 +26,7 @@ with open("config.json", 'r') as f:
     calibrate               ='calibr'
     playframe               ='playfr'
     playframe_raw           ='playfr_raw'
+    playframe_hex           ='playfr_hex'
     #playanimation          ='playan'
   
   
@@ -102,6 +103,24 @@ def handlePlayFrameRaw(s):
         mov['ud'] = float(s[i])
         mov['lr'] = float(s[i+1])
         routeMoveServos(json.dumps(mov))
+        
+        
+#mosquitto_pub -t playfr_hex -m '0AFF'     # XX (hex) = angle
+#
+#   mosquitto_pub -t playfr_hex -m '000FFFFFAAFF'
+#              =
+#   {'mi': 0, 'ud': 0, 'lr': 15}
+#   {'mi': 1, 'ud': 255, 'lr': 255}
+#   {'mi': 2, 'ud': 170, 'lr': 255}
+
+def handlePlayFrameHex(s):
+  
+    for i in range(0, len(s), 4):
+        mov = {}
+        mov['mi'] = i//4
+        mov['ud'] = int(s[i]+s[i+1], 16)
+        mov['lr'] = int(s[i+2]+s[i+3], 16)
+        routeMoveServos(json.dumps(mov))
 
 '''
 #mosquitto_pub -t playanimation -m '{"Animation": "some name you give to it","frames": [{"Frame": "some name you give to it","movements": [ {"mirror": 44,"ud": 1,"lr": 10}]}]}'
@@ -123,6 +142,7 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe(moveservos,0)
         client.subscribe(playframe,0)
         client.subscribe(playframe_raw,0)
+        client.subscribe(playframe_hex,0)
         #client.subscribe(playanimation,0)   
         client.subscribe(calibrate,1) 
         
@@ -144,6 +164,8 @@ def on_message(mqttc, obj, msg):
             handlePlayFrame(payload)
         elif msg.topic==playframe_raw:
             handlePlayFrameRaw(payload)
+        elif msg.topic==playframe_hex:
+            handlePlayFrameHex(payload)
         #elif msg.topic==playanimation:
         #    handlePlayAnimation(payload)
 
