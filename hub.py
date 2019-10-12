@@ -90,7 +90,7 @@ def translateLrPoly (udangle, lrangle):
 
 
 def moveServo(bonnet, port, angl):
-    bonnets[int(bonnet)].servo[int(port)].angle = int(angl) + deltas[bonnet][port]
+    bonnets[int(bonnet)].servo[int(port)].angle = float(angl) + deltas[bonnet][port]
     
     
     
@@ -147,13 +147,13 @@ def handleMoveMirror(msg):
 
     if j['mi']>=0 and j['mi']<=90:
         if not (j['ud']<POLICE_SERVO_MIN_SERVO_POS or j['ud']>POLICE_SERVO_MAX_SERVO_POS):
-            moveServo(adresses['bonnet'], adresses['UD-port'], translateUdPoly(j['ud']))
+            moveServo(adresses['bonnet'], adresses['UD-port'], translateUdPoly(float(j['ud'])))
         else:
             errormessage='moveservos invalid UD:'+json.dumps(j)
             client.publish("error",errormessage)
                
         if not (j['lr']<POLICE_SERVO_MIN_SERVO_POS or j['lr']>POLICE_SERVO_MAX_SERVO_POS):        
-            moveServo(adresses['bonnet'], adresses['LR-port'], translateLrPoly(j['ud'], j['lr']))        
+            moveServo(adresses['bonnet'], adresses['LR-port'], translateLrPoly(float(j['ud']), float(j['lr'])))        
         else:
             errormessage='moveservos invalid LR:'+json.dumps(j)
             client.publish("error",errormessage)
@@ -172,8 +172,8 @@ def handleCalibrate(msg):
     
     b = adresses['bonnet']
     
-    deltas[b][j['UD-port']] = j['dud']
-    deltas[b][j['LR-port']] = j['dlr']
+    deltas[b][j['UD-port']] = float(j['dud'])
+    deltas[b][j['LR-port']] = float(j['dlr'])
     
     
     

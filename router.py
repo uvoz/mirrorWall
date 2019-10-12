@@ -99,8 +99,8 @@ def handlePlayFrameRaw(s):
     for i in range(0, len(s), 2):
         mov = {}
         mov['mi'] = i//2
-        mov['ud'] = int(s[i])
-        mov['lr'] = int(s[i+1])
+        mov['ud'] = float(s[i])
+        mov['lr'] = float(s[i+1])
         routeMoveServos(json.dumps(mov))
 
 '''
