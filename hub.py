@@ -171,9 +171,11 @@ def handleCalibrate(msg):
     adresses = mm.getMirrorHubAddresses(hub, j['mi'])
     
     b = adresses['bonnet']
+    ud_port = adresses['UD-port']
+    lr_port = adresses['LR-port']
     
-    deltas[b][j['UD-port']] = float(j['dud'])
-    deltas[b][j['LR-port']] = float(j['dlr'])
+    deltas[b][ud_port] = float(j['dud'])
+    deltas[b][lr_port] = float(j['dlr'])
     
     
     
