@@ -27,3 +27,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+
+Reflexe
+Instalace Reflexe je výsledkem otevřené výzvy Signal Calling, jejíž partnerem se pro rok 2019 stal PrusaLab. Výhercům výzvy, kterými se stala dvojice architektů Adam Cigler a Petr Vacek, jsme nabídli prostory, vybavení Labu a pomoc našich mistrů při kompletaci jejich instalace. Po půl roce intenzivní práce instalace úspěšně debutovala na samotném Signal Festivalu.
