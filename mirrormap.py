@@ -1,6 +1,5 @@
 # The MIRROR MAP
 # 2019 by StrejcekBob
-# Upgraded by MakerMatty
 # Tested by MakerMatty
 # This file contains the Mirror map that enables us to retrieve the hub, bonnet and the i2cports for a given mirror.
 # Mirrormapping serves sofware & people that wish to operate mirrors based on their logical ID.
