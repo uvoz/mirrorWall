@@ -1,31 +1,29 @@
 # https://prusalab.cz/projekty/reflexe/
 
+This is the source code to control the REFLEXE mirrorwall.
 
-# mirrorWall
-This is the software that flows messages to the mirror wall.
-It lives on mosquitto MQTT.
-
-# 
-# How to use from the outside:
-## Move a mirror using translation of angles to servo angles(that is slow): 
-
- mosquitto_pub -h 127.0.0.1 -t movemirror -m '{"mirror":44,"ud":20,"lr":20}'
- 
-
-## play a frame containing multiple/all mirror positions (using translation of angles above)
- 
- #mosquitto_pub -t playframe -m '{"Frame": "some name you give to the frame","movements": [{"mirror": 41,"ud": 20,"lr": 20}, {"mirror": 42,"ud": 20,"lr": 20}, {"mirror": 44,"ud": 1,"lr": 10}]}'
- 
- ## play a animation consisting out of frames above)
- mosquitto_pub -t playanimation -m '{"Animation": "some name you give to it","frames": [{"Frame": "some name you give to it","movements": [ {"mirror": 44,"ud": 1,"lr": 10}]}]}'
-def handleplayanimation(msg):
- 
+Author                 : Bob Heida
+Test and minor changes : MakerMatty (see commit history)
 
 
-## Move a servo on a bonnet connected to a hub (no servo angle translation):
+MIT License
 
- mosquitto_pub -t hub1/pinlevelapi -m '{"bonnet":0,"servo":0,"angle":140}'
- 
+Copyright (c) 2019 Bob Heida
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
