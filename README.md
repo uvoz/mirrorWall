@@ -3,7 +3,7 @@
 ## This is the source code to control the REFLEXE mirrorwall.
 
 ### Author                 : Bob Heida
-### Test and minor changes : MakerMatty (see commit history)
+### Test and minor changes : immakermatty Matěj Suchánek
 
 
 ### MIT License
