@@ -1,6 +1,39 @@
-# The MIRROR MAP
-# 2019 by StrejcekBob
-# Tested by MakerMatty
+# https://prusalab.cz/projekty/reflexe/
+
+## This is the source code to control the REFLEXE mirrorwall.
+
+### Author                 : Bob Heida
+### Test and minor changes : MakerMatty (see commit history)
+
+
+### MIT License
+
+#Copyright (c) 2019 Bob Heida
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+
+
+
+# ROUTER for mirror messages
+# 2019 by StrejcekBob (Bob Heida)
+# Testing and minor modifications by MakerMatty
+
 # This file contains the Mirror map that enables us to retrieve the hub, bonnet and the i2cports for a given mirror.
 # Mirrormapping serves sofware & people that wish to operate mirrors based on their logical ID.
 
