@@ -1,3 +1,6 @@
+# https://prusalab.cz/projekty/reflexe/
+
+
 # mirrorWall
 This is the software that flows messages to the mirror wall.
 It lives on mosquitto MQTT.
