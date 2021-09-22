@@ -1,5 +1,5 @@
 # MQTT triggered communication to i2c Adafruit 16-Channel 12-bit PWM/Servo Bonnet
-# 2019 by StrejcekBob
+# 2019 by StrejcekBob (Bob Heida)
 # Upgraded by MakerMatty
 # Tested by MakerMatty
 # This are the interfaces between the outside word and the HUB.
