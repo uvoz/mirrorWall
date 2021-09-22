@@ -1,7 +1,41 @@
-# MQTT triggered communication to i2c Adafruit 16-Channel 12-bit PWM/Servo Bonnet
+# https://prusalab.cz/projekty/reflexe/
+
+## This is the source code to control the REFLEXE mirrorwall.
+
+### Author                 : Bob Heida
+### Test and minor changes : MakerMatty (see commit history)
+
+
+### MIT License
+
+#Copyright (c) 2019 Bob Heida
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+
+
+
+# ROUTER for mirror messages
 # 2019 by StrejcekBob (Bob Heida)
-# Upgraded by MakerMatty
-# Tested by MakerMatty
+# Testing and minor modifications by MakerMatty
+
+
+
 # This are the interfaces between the outside word and the HUB.
 # You talk to a hub by sending it MQTT messages.
 
